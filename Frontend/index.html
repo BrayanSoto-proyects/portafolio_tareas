@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portafolio de Tareas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    .datos {
+      background: #eef3ff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .datos p {
+      margin: 8px 0;
+      font-size: 17px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f9f9f9;
+      margin-bottom: 12px;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 5px solid #2f5bea;
+    }
+
+    a {
+      color: #2f5bea;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: #b00020;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Portafolio de Tareas</h1>
+
+    <section class="datos">
+      <h2>Datos escolares</h2>
+      <p><strong>Nombre:</strong> Escribe aquí tu nombre completo</p>
+      <p><strong>Matrícula:</strong> Escribe aquí tu matrícula</p>
+      <p><strong>Grupo:</strong> Escribe aquí tu grupo</p>
+    </section>
+
+    <section>
+      <h2>Tareas del semestre</h2>
+      <ul id="lista-tareas">
+        <li>Cargando tareas...</li>
+      </ul>
+      <p id="mensaje-error" class="error"></p>
+    </section>
+  </main>
+
+  <script>
+    // Cambiar esta URL cuando el backend esté publicado en Render.
+    const API_URL = "http://localhost:5000/api/tareas";
+    // Ejemplo al publicar:
+    // const API_URL = "https://tu-backend.onrender.com/api/tareas";
+
+    const listaTareas = document.getElementById("lista-tareas");
+    const mensajeError = document.getElementById("mensaje-error");
+
+    async function cargarTareas() {
+      try {
+        const respuesta = await fetch(API_URL);
+
+        if (!respuesta.ok) {
+          throw new Error("No se pudieron obtener las tareas desde la API");
+        }
+
+        const tareas = await respuesta.json();
+        listaTareas.innerHTML = "";
+
+        tareas.forEach((tarea) => {
+          const item = document.createElement("li");
+          item.innerHTML = `
+            <strong>${tarea.ID}. ${tarea.Titulo}</strong><br>
+            <a href="${tarea.URL}" target="_blank" rel="noopener noreferrer">
+              Abrir tarea
+            </a>
+          `;
+          listaTareas.appendChild(item);
+        });
+      } catch (error) {
+        listaTareas.innerHTML = "";
+        mensajeError.textContent = "Error al cargar las tareas. Revisa que el backend esté activo y que la URL de la API sea correcta.";
+        console.error(error);
+      }
+    }
+
+    cargarTareas();
+  </script>
+</body>
+</html>
